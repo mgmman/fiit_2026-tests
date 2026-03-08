@@ -8,7 +8,7 @@ public class NameValidatorTests
 {
     [TestCaseSource(nameof(TestCases))]
     public bool Test_IsValidMethod(string email) => _validator.IsValid(email);
-    
+
     [Test]
     public void TestIsValid_ThrowsArgumentNullException_WhenNameIsNull()
     {
@@ -33,5 +33,7 @@ public class NameValidatorTests
             .Returns(false);
         yield return new TestCaseData("S. Grant").SetName("IsValid_ShouldReturnFalse_WhenNameIsShortenedWithDot")
             .Returns(false);
+        yield return new TestCaseData("S Grant").SetName("IsValid_ShouldReturnTrue_WhenNameIsShortenedWithoutDot")
+            .Returns(true);
     }
 }

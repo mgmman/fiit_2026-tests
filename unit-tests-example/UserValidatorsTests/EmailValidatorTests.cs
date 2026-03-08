@@ -35,7 +35,11 @@ public class EmailValidatorTests
             .Returns(false);
         yield return new TestCaseData("aboba@.com").SetName("IsValid_ShouldReturnFalse_WithoutProviderAddress")
             .Returns(false);
-        yield return new TestCaseData("12das312@12asd321.com").SetName("IsValid_ShouldReturnTrue_WhenAddressIsNumbers")
+        yield return new TestCaseData("12das312@12asd321.com").SetName("IsValid_ShouldReturnTrue_WhenAddressHasNumbers")
+            .Returns(true);
+        yield return new TestCaseData("12312@12321.com").SetName("IsValid_ShouldReturnTrue_WhenAddressIsNumbers")
+            .Returns(true);
+        yield return new TestCaseData("a@b.com").SetName("IsValid_ShouldReturnTrue_WhenAddressIsShort")
             .Returns(true);
         yield return new TestCaseData("&e3()@!?#@.com").SetName("IsValid_ShouldReturnFalse_WhenAddressIsSpecialSymbols")
             .Returns(false);
