@@ -76,7 +76,8 @@ public class PasswordValidatorTests
     [Test]
     public void TestIsValid_ThrowsArgumentNullException_WhenNameIsNull()
     {
-        Assert.Throws<ArgumentNullException>(() => _validator.IsValid(null), "Ожидали ошибку при получении null");
+        TestDelegate action = () => _validator.IsValid(null);
+        Assert.Throws<ArgumentNullException>(action, "Ожидали ошибку при проверке на валидность null");
     }
 
     private readonly PasswordValidator _validator = new();

@@ -3,7 +3,6 @@ using UserCreatorTask.UserValidators;
 
 namespace UserValidatorTests;
 
-[Parallelizable(ParallelScope.Fixtures)]
 public class EmailValidatorTests
 {
     [TestCaseSource(nameof(TestCases))]
@@ -15,7 +14,8 @@ public class EmailValidatorTests
     [Test]
     public void TestIsValid_ThrowsArgumentNullException_WhenNameIsNull()
     {
-        Assert.Throws<ArgumentNullException>(() => _validator.IsValid(null), "Ожидали ошибку при получении null");
+        TestDelegate action = () => _validator.IsValid(null);
+        Assert.Throws<ArgumentNullException>(action, "Ожидали ошибку при проверке на валидность null");
     }
 
     private readonly EmailValidator _validator = new();
