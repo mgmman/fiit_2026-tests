@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Kontur.BigLibrary.Service.Contracts;
 using Kontur.BigLibrary.Service.Services.BookService;
 using Kontur.BigLibrary.Service.Services.BookService.Repository;
 using Kontur.BigLibrary.Service.Services.EventService;
@@ -19,10 +22,17 @@ public class ContainerForMockTests
     public ContainerForMockTests()
     {
         _collection = new ServiceCollection();
-
-        _collection.AddSingleton(Substitute.For<IImageRepository>());
+        var imageRepository = Substitute.For<IImageRepository>();
+        imageRepository.GetAsync(1, Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new Image { Data = Array.Empty<byte>() }));
+        var bookRepository = Substitute.For<IBookRepository>();
+        bookRepository.GetRubricAsync(1,  Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new Rubric()));
+        bookRepository.SaveBookAsync(Arg.Any<Book>(), Arg.Any<CancellationToken>())
+            .Returns(x => Task.FromResult((Book)x[0]));
+        _collection.AddSingleton(imageRepository);
         _collection.AddSingleton(Substitute.For<IEventRepository>());
-        _collection.AddSingleton(Substitute.For<IBookRepository>());
+        _collection.AddSingleton(bookRepository);
 
         _collection.AddSingleton<ISynonymMaker, SynonymMaker>();
         _collection.AddSingleton<IBookService, BookService>();
