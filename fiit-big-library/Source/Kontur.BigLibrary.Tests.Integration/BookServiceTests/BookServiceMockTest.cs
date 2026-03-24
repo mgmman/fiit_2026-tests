@@ -8,6 +8,7 @@ using Kontur.BigLibrary.Service.Exceptions;
 using Kontur.BigLibrary.Service.Services.BookService;
 using Kontur.BigLibrary.Service.Services.BookService.Repository;
 using Kontur.BigLibrary.Service.Services.EventService.Repository;
+using Kontur.BigLibrary.Service.Services.ImageService.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
@@ -21,11 +22,26 @@ public class BookServiceMockTest
     #region WithContainer
 
     private static readonly IServiceProvider container = new ContainerForMockTests().Build();
-    private static readonly IBookService bookService = container.GetRequiredService<IBookService>();
-    private static readonly IBookRepository bookRepository = container.GetRequiredService<IBookRepository>();
-    private static readonly IEventRepository eventRepository = container.GetRequiredService<IEventRepository>();
+    private IBookService bookService;
+    private IBookRepository bookRepository;
+    private IEventRepository eventRepository;
 
     #endregion
+
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        bookService = container.GetRequiredService<IBookService>();
+        bookRepository = container.GetRequiredService<IBookRepository>();
+        eventRepository = container.GetRequiredService<IEventRepository>();
+        var imageRepository = container.GetRequiredService<IImageRepository>();
+        imageRepository.GetAsync(1, Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new Image { Data = Array.Empty<byte>() }));
+        bookRepository.GetRubricAsync(1,  Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new Rubric()));
+        bookRepository.SaveBookAsync(Arg.Any<Book>(), Arg.Any<CancellationToken>())
+            .Returns(x => Task.FromResult((Book)x[0]));
+    }
 
 
     [Test]
@@ -44,6 +60,7 @@ public class BookServiceMockTest
         result.Name.Should().Be(book.Name);
         await bookRepository.Received(Quantity.Exactly(1)).SaveBookAsync(book, CancellationToken.None);
         await eventRepository.ReceivedWithAnyArgs(1).SaveAsync(new ChangedEvent(),  CancellationToken.None);
+        await bookRepository.ReceivedWithAnyArgs(1).SaveBookIndexAsync(1, "", "", CancellationToken.None);
     }
     
     [Test]
