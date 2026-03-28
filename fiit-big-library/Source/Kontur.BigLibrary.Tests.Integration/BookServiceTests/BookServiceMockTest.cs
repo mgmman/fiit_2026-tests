@@ -9,6 +9,7 @@ using Kontur.BigLibrary.Service.Services.BookService;
 using Kontur.BigLibrary.Service.Services.BookService.Repository;
 using Kontur.BigLibrary.Service.Services.EventService.Repository;
 using Kontur.BigLibrary.Service.Services.ImageService.Repository;
+using Kontur.BigLibrary.Tests.Core.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
@@ -17,19 +18,21 @@ using NUnit.Framework;
 namespace Kontur.BigLibrary.Tests.Integration.BookServiceTests;
 
 [Parallelizable(ParallelScope.Children)]
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public class BookServiceMockTest
 {
     #region WithContainer
 
     private static readonly IServiceProvider container = new ContainerForMockTests().Build();
-    private IBookService bookService;
-    private IBookRepository bookRepository;
-    private IEventRepository eventRepository;
+    private static IBookService bookService;
+    private static IBookRepository bookRepository;
+    private static IEventRepository eventRepository;
+    private BookBuilder bookBuilder;
 
     #endregion
 
     [OneTimeSetUp]
-    public void Setup()
+    public static void OneTimeSetup()
     {
         bookService = container.GetRequiredService<IBookService>();
         bookRepository = container.GetRequiredService<IBookRepository>();
@@ -43,18 +46,17 @@ public class BookServiceMockTest
             .Returns(x => Task.FromResult((Book)x[0]));
     }
 
+    [SetUp]
+    public void Setup()
+    {
+        bookBuilder = container.GetRequiredService<BookBuilder>();
+    }
+
 
     [Test]
     public async Task SaveBookAsync_ReturnSameBook_WhenSaveCorrectBook()
     {
-        var book = new Book
-        {
-            Name = "Database Systems. The Complete Book",
-            Author = "Hector Garcia-Molina, Jeffrey D.Ullman, Jennifer Widom",
-            RubricId = 1,
-            ImageId = 1,
-            Description = "New_book"
-        };
+        var book = bookBuilder.Build();
         var result = await bookService.SaveBookAsync(book, CancellationToken.None);
 
         result.Name.Should().Be(book.Name);
@@ -68,15 +70,9 @@ public class BookServiceMockTest
     {
         var id = -1;
         
-        var book = new Book
-        {
-            Id = id,
-            Name = "Database Systems. The Complete Book",
-            Author = "Hector Garcia-Molina, Jeffrey D.Ullman, Jennifer Widom",
-            RubricId = -1,
-            ImageId = 1,
-            Description = "New_book"
-        };
+        var book = bookBuilder.WithRubricId(-1)
+            .WithId(id)
+            .Build();
         var action = async () => await bookService.SaveBookAsync(book, CancellationToken.None);
 
         await action.Should()
@@ -94,15 +90,9 @@ public class BookServiceMockTest
     {
         var id = -1;
         
-        var book = new Book
-        {
-            Id = id,
-            Name = "Database Systems. The Complete Book",
-            Author = "Hector Garcia-Molina, Jeffrey D.Ullman, Jennifer Widom",
-            RubricId = 1,
-            ImageId = -1,
-            Description = "New_book"
-        };
+        var book = bookBuilder.WithImage(-1)
+            .WithId(id)
+            .Build();
         var action = async () => await bookService.SaveBookAsync(book, CancellationToken.None);
 
         await action.Should()

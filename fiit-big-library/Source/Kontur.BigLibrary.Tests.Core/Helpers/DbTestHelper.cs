@@ -1,5 +1,6 @@
 using Kontur.BigLibrary.DataAccess;
 using Kontur.BigLibrary.Service.Configuration;
+using Kontur.BigLibrary.Service.Contracts;
 using Microsoft.Data.Sqlite;
 
 namespace Kontur.BigLibrary.Tests.Core.Helpers
@@ -33,6 +34,20 @@ namespace Kontur.BigLibrary.Tests.Core.Helpers
         public static async Task DropDbAsync()
         {
             File.Delete(TestDbName);
+        }
+        
+        public static BookFilter CreateFilter(string query = "", string rubric = "", int? limit = null, bool? isBusy = null,
+            BookOrder order = BookOrder.ByLastAdding, int offset = 0)
+        {
+            return new()
+            {
+                Query = query,
+                RubricSynonym = rubric,
+                IsBusy = isBusy,
+                Limit = limit,
+                Order = order,
+                Offset = offset
+            };
         }
     }
 }
