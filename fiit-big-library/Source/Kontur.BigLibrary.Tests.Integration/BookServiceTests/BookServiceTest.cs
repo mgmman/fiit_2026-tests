@@ -50,15 +50,10 @@ public class BookServiceTest
     {
         var imageForSave = new Image { Data = Array.Empty<byte>() };
         var image = await imageService.SaveAsync(imageForSave, new CancellationToken()).ConfigureAwait(false);
-
-        var book = new Book
-        {
-            Name = "Database Systems. The Complete Book",
-            Author = "Hector Garcia-Molina, Jeffrey D.Ullman, Jennifer Widom",
-            RubricId = 1,
-            ImageId = image.Id!.Value,
-            Description = "New_book"
-        };
+        
+        var builder = container.GetRequiredService<BookBuilder>();
+        
+        var book = builder.WithImage(image.Id!.Value).Build();
         var result = await bookService.SaveBookAsync(book, CancellationToken.None);
 
         result.Name.Should().Be(book.Name);
@@ -79,15 +74,12 @@ public class BookServiceTest
 
         var id = -1;
         
-        var book = new Book
-        {
-            Id = id,
-            Name = "Database Systems. The Complete Book",
-            Author = "Hector Garcia-Molina, Jeffrey D.Ullman, Jennifer Widom",
-            RubricId = -1,
-            ImageId = image.Id!.Value,
-            Description = "New_book"
-        };
+        var builder = container.GetRequiredService<BookBuilder>();
+        
+        var book = builder.WithImage(image.Id!.Value)
+            .WithRubricId(-1)
+            .WithId(id)
+            .Build();
         var action = async () => await bookService.SaveBookAsync(book, CancellationToken.None);
 
         await action.Should()
@@ -104,15 +96,11 @@ public class BookServiceTest
     {
         var id = -1;
         
-        var book = new Book
-        {
-            Id = id,
-            Name = "Database Systems. The Complete Book",
-            Author = "Hector Garcia-Molina, Jeffrey D.Ullman, Jennifer Widom",
-            RubricId = 1,
-            ImageId = -1,
-            Description = "New_book"
-        };
+        var builder = container.GetRequiredService<BookBuilder>();
+        
+        var book = builder.WithImage(-1)
+            .WithId(id)
+            .Build();
         var action = async () => await bookService.SaveBookAsync(book, CancellationToken.None);
 
         await action.Should()

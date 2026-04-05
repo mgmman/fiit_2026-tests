@@ -22,6 +22,9 @@ public class ContainerForMockTests
     public ContainerForMockTests()
     {
         _collection = new ServiceCollection();
+        
+        _collection.AddTransient<BookBuilder>();
+        
         _collection.AddSingleton(Substitute.For<IImageRepository>());
         _collection.AddSingleton(Substitute.For<IEventRepository>());
         _collection.AddSingleton(Substitute.For<IBookRepository>());

@@ -6,11 +6,14 @@ public class BookBuilder
 {
     private string? name;
     private string? author;
+    private string? description;
     private int? id;
     private bool isDeleted;
     private int rubricId = 1;
     private int imageId = 1;
     private int? price;
+
+    private int timesCalled;
 
     public BookBuilder WithName(string? name)
     {
@@ -48,15 +51,25 @@ public class BookBuilder
         return this;
     }
 
-    public Book Build() => new()
+    public BookBuilder WithDescription(string description)
     {
-        Name = name ?? $"Default_name{IntGenerator.Get()}",
-        Author = author ?? $"Default_author{IntGenerator.Get()}",
-        Id = id ?? IntGenerator.Get(),
-        Description = "",
-        IsDeleted = isDeleted,
-        RubricId = rubricId,
-        ImageId = imageId,
-        Count = 1
-    };
+        this.description = description;
+        return this;
+    }
+
+    public Book Build()
+    {
+        Console.WriteLine($"Build called: {++timesCalled} times");
+        return new()
+        {
+            Name = name ?? $"Default_name{IntGenerator.Get()}",
+            Author = author ?? $"Default_author{IntGenerator.Get()}",
+            Id = id ?? IntGenerator.Get(),
+            Description = description ?? "",
+            IsDeleted = isDeleted,
+            RubricId = rubricId,
+            ImageId = imageId,
+            Count = 1
+        };
+    } 
 }

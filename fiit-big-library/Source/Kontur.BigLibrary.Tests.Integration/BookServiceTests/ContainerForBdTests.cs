@@ -20,6 +20,8 @@ public class ContainerForBdTests
     {
         _collection = new ServiceCollection();
 
+        _collection.AddTransient<BookBuilder>();
+
         _collection.AddSingleton<IDbConnectionFactory>(x => new DbConnectionFactory(DbHelper.ConnectionString));
 
         _collection.AddSingleton<ISynonymMaker, SynonymMaker>();
