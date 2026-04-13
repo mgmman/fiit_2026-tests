@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using FluentAssertions;
 using Kontur.BigLibrary.Service.Contracts;
-using Kontur.BigLibrary.Service.Models;
 using Kontur.BigLibrary.Tests.Core.ApiClients;
 using Kontur.BigLibrary.Tests.Core.Helpers;
 using Newtonsoft.Json;
@@ -48,6 +47,9 @@ public class BooksApiTests : BooksApiTestBase
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Should().NotBeNull();
         response.Content.Should().Contain("Книга свободна.");
+
+        var queue = booksApiClient.GetReadersInQueueDeserialized(book.Id.ToString()!, user.token);
+        queue.Should().BeEmpty();
     }
     
     [Test]
@@ -70,6 +72,9 @@ public class BooksApiTests : BooksApiTestBase
         response2.StatusCode.Should().Be(HttpStatusCode.OK);
         response2.Content.Should().NotBeNull();
         response2.Content.Should().Contain("Вы встали в очередь.");
+        
+        var queue = booksApiClient.GetReadersInQueueDeserialized(book.Id.ToString()!, user.token);
+        queue.Should().ContainSingle().Which.UserName.Should().Be(userName2);
     }
     
     [Test]
@@ -90,6 +95,9 @@ public class BooksApiTests : BooksApiTestBase
         response2.StatusCode.Should().Be(HttpStatusCode.OK);
         response2.Content.Should().NotBeNull();
         response2.Content.Should().Contain("Вы уже взяли эту книгу.");
+        
+        var queue = booksApiClient.GetReadersInQueueDeserialized(book.Id.ToString()!, user.token);
+        queue.Should().BeEmpty();
     }
     
     [Test]
@@ -118,6 +126,9 @@ public class BooksApiTests : BooksApiTestBase
         response3.StatusCode.Should().Be(HttpStatusCode.OK);
         response3.Content.Should().NotBeNull();
         response3.Content.Should().Contain("Вы уже стоите в очереди.");
+        
+        var queue = booksApiClient.GetReadersInQueueDeserialized(book.Id.ToString()!, user.token);
+        queue.Should().ContainSingle().Which.UserName.Should().Be(userName2);
     }
     
     [Test]
@@ -132,6 +143,9 @@ public class BooksApiTests : BooksApiTestBase
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Should().NotBeNull();
         response.Content.Should().Contain("Вы взяли книгу.");
+
+        var readers = booksApiClient.GetBookReadersDeserialized(book.Id.ToString()!, user.token);
+        readers.Should().ContainSingle().Which.UserName.Should().Be(userName);
     }
     
     [Test]
@@ -154,6 +168,9 @@ public class BooksApiTests : BooksApiTestBase
         response2.StatusCode.Should().Be(HttpStatusCode.OK);
         response2.Content.Should().NotBeNull();
         response2.Content.Should().Contain("Книга занята.");
+        
+        var readers = booksApiClient.GetBookReadersDeserialized(book.Id.ToString()!, user.token);
+        readers.Should().ContainSingle().Which.UserName.Should().Be(userName);
     }
     
     [Test]
@@ -190,6 +207,12 @@ public class BooksApiTests : BooksApiTestBase
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Should().NotBeNull();
         response.Content.Should().Contain("Не ваша очередь.");
+        
+        var readers = booksApiClient.GetBookReadersDeserialized(book.Id.ToString()!, user.token);
+        readers.Should().BeEmpty();
+        
+        var queue = booksApiClient.GetReadersInQueueDeserialized(book.Id.ToString()!, user.token);
+        queue.Should().ContainSingle().Which.UserName.Should().Be(userName);
     }
     
     [Test]
@@ -224,5 +247,8 @@ public class BooksApiTests : BooksApiTestBase
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Should().NotBeNull();
         response.Content.Should().Contain("Вы взяли книгу.");
+        
+        var readers = booksApiClient.GetBookReadersDeserialized(book.Id.ToString()!, user.token);
+        readers.Should().ContainSingle().Which.UserName.Should().Be(userName2);
     }
 }
