@@ -1,5 +1,6 @@
 ﻿using Kontur.BigLibrary.Service.Contracts;
 using Kontur.BigLibrary.Tests.Core.Helpers;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace Kontur.BigLibrary.Tests.Core.ApiClients;
@@ -125,6 +126,12 @@ public class BooksApiClient : ApiClientBase
 
         return client.ExecuteGet(request);
     }
+
+    public ReaderInQueue[] GetReadersInQueueDeserialized(string bookId, string token)
+    {
+        var queue = GetReadersInQueue(bookId, token);
+        return JsonConvert.DeserializeObject<ReaderInQueue[]>(queue.Content);
+    }
     
     public RestResponse GetBookReaders(string bookId, string token)
     {
@@ -134,4 +141,10 @@ public class BooksApiClient : ApiClientBase
 
         return client.ExecuteGet(request);
     } 
+    
+    public Reader[] GetBookReadersDeserialized(string bookId, string token)
+    {
+        var queue = GetBookReaders(bookId, token);
+        return JsonConvert.DeserializeObject<Reader[]>(queue.Content);
+    }
 }
