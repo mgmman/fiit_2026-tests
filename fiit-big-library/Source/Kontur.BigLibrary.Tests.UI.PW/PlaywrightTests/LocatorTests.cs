@@ -9,7 +9,7 @@ public class LocatorTests : TestBase
 {
     private string email;
     private string password;
-    private const string firstBookSelector = "[data-tid='book-list']>div:nth-child(2)>a:nth-child(1)";
+    private const string firstBookSelector = "(//*[@data-tid='book-link'])[1]";
     
     [OneTimeSetUp]
     public async Task OneTimeSetup()
@@ -29,8 +29,9 @@ public class LocatorTests : TestBase
         var (page, playwright) = await CreatePage();
         await SignIn(page);
         
-        var searchBar =  page.Locator("input[placeholder='найти по названию, автору или рубрике']");
+        var searchBar =  page.Locator("[data-tid='search-input'] input");
         await searchBar.FillAsync("Название книги");
+        
         await searchBar.ClearAsync();
         playwright.Dispose();
     }
@@ -41,7 +42,7 @@ public class LocatorTests : TestBase
         var (page, playwright) = await CreatePage();
         await SignIn(page);
         
-        var secondBook = page.Locator("[data-tid='book-list']>div:nth-child(2)>a:nth-child(2)");
+        var secondBook = page.Locator("(//*[@data-tid='book-link'])[2]");
         await secondBook.ClickAsync();
         page.Url.Should().Contain("/books/");
         await page.GoBackAsync();
