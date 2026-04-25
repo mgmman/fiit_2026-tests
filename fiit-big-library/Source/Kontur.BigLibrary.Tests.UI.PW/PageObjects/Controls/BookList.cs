@@ -32,4 +32,11 @@ public class BookList : ControlBase
         // return new BookItem(Locator.Locator($"[data-tid='bookItem-{bookName}']"));
         return ControlFactory.Create<BookItem>(Locator.Locator($"[data-tid='bookItem-{bookName}']"));
     }
+
+    public async Task<bool> CheckBookPresence(string bookName)
+    {
+        bookName = bookName.Replace(" ", "_");
+        var locator = Locator.Locator($"[data-tid='bookItem-{bookName}']");
+        return await locator.IsVisibleAsync();
+    }
 }

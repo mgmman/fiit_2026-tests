@@ -44,7 +44,7 @@ public abstract class ControlBase(ILocator locator, IControlFactory controlFacto
     
     public async Task<T> ClickAndOpenPageAsync<T>() where T : PageBase
     {
-        await Locator.ClickAsync();
+        await Locator.ClickAsync(_defaultClickOptions);
         
         var pageObject = PageFactory.Create<T>(Locator.Page);
         return pageObject;
@@ -89,8 +89,9 @@ public abstract class ControlBase(ILocator locator, IControlFactory controlFacto
         return await Locator.Locator("_react=[warning]").First.IsVisibleAsync();
     }
 
-    public Task ClickAsync(LocatorClickOptions? options = default)
+    public Task ClickAsync(LocatorClickOptions? options = null)
     {
+        options ??= _defaultClickOptions;
         return Locator.ClickAsync(options);
     }
 
@@ -137,4 +138,9 @@ public abstract class ControlBase(ILocator locator, IControlFactory controlFacto
     {
         return locator.GetAttributeAsync(attributeName, options);
     }
+
+    private LocatorClickOptions _defaultClickOptions = new()
+    {
+        Force = true
+    };
 }
