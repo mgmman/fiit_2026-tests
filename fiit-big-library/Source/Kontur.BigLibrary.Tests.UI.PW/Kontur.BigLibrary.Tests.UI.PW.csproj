@@ -14,7 +14,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
         <PackageReference Include="Microsoft.Playwright" Version="1.57.0" />
-        <PackageReference Include="NUnit" Version="3.13.3"/>
+        <PackageReference Include="NUnit" Version="3.14.0"/>
         <PackageReference Include="NUnit3TestAdapter" Version="4.2.1"/>
         <PackageReference Include="NUnit.Analyzers" Version="3.6.1"/>
         <PackageReference Include="coverlet.collector" Version="6.0.0"/>
@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Kontur.BigLibrary.Tests.Core\Kontur.BigLibrary.Tests.Core.csproj" />
+      <ProjectReference Include="..\Kontur.BigLibrary.Tests.Integration\Kontur.BigLibrary.Tests.Integration.csproj" />
     </ItemGroup>
 
     <ItemGroup>

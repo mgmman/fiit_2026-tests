@@ -164,6 +164,12 @@ namespace Kontur.BigLibrary.Service.Services.BookService.Repository
             using var db = await connectionFactory.OpenAsync(cancellation);
             await db.ExecuteAsync(deleteBookSql, new { Id = id });
         }
+        
+        public async Task DeleteAllBooksAsync(CancellationToken cancellation)
+        {
+            using var db = await connectionFactory.OpenAsync(cancellation);
+            await db.ExecuteAsync(deleteAllBooksSql);
+        }
 
         public async Task DeleteBookIndexAsync(int id, CancellationToken cancellation)
         {
@@ -496,6 +502,8 @@ namespace Kontur.BigLibrary.Service.Services.BookService.Repository
                           price = @Price
             returning *;";
 
+        private static readonly string deleteAllBooksSql = @"delete from book";
+        
         private static readonly string deleteBookSql = @"
             delete from book
                 where id = @Id";

@@ -17,6 +17,8 @@ namespace Kontur.BigLibrary.Service.Services.BookService.Repository
         Task<Book> SaveBookAsync(Book book, CancellationToken cancellation);
         Task SaveBookIndexAsync(int id, string ftsLexems, string synonym, CancellationToken cancellation);
         Task DeleteBookAsync(int id, CancellationToken cancellation);
+        Task DeleteAllBooksAsync(CancellationToken cancellation);
+        
         Task DeleteBookIndexAsync(int id, CancellationToken cancellation);
         Task SaveRubricIndexAsync(int id, string synonym, CancellationToken cancellation);
         Task<Reader> SaveReaderAsync(Reader reader, CancellationToken cancellation);

@@ -30,6 +30,7 @@ public abstract class TestBase
     private readonly IServiceProvider _serviceProvider
         = new ServiceCollection()
             .AddPlaywright()
+            .AddDBServices()
             .AddTestDataHelpers()
             .BuildServiceProvider();
 
